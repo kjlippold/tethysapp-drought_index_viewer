@@ -1,0 +1,310 @@
+{% extends "drought_index_viewer/base.html" %}
+{% load tethys_gizmos %}
+
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://openlayers.org/en/v4.3.1/css/ol.css" type="text/css">
+{% endblock %}
+
+{% block global_scripts %}
+{{block.super}}
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://openlayers.org/en/v4.3.1/build/ol.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+{% endblock %}
+
+{% block app_navigation_items %}
+<div scroll="no" style="overflow: hidden">
+    <br>
+    {% gizmo index_selection %}
+    {% gizmo date_selection %}
+    <b>Coordinates</b>
+    <div id="mouse-position" class="well well-sm"></div>
+    <b id="data-name"></b>
+    <div id="mousevalue" class="well well-sm">No Value</div>
+    <h4>Legend:</h4>
+    <div class="row">
+        <div id="lst-legend" class="col-sm-6">
+            <h5><b>LST</b></h5>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#8c510a" fill="#8c510a" stroke-width="2"/>
+                </svg>
+                -0.2 to -0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#d8b365" fill="#d8b365" stroke-width="2"/>
+                </svg>
+                -0.1 to 0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#f6e8c3" fill="#f6e8c3" stroke-width="2"/>
+                </svg>
+                0.1 to 0.3
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#c7eae5" fill="#c7eae5" stroke-width="2"/>
+                </svg>
+                0.3 to 0.5
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#5ab4ac" fill="#5ab4ac" stroke-width="2"/>
+                </svg>
+                0.5 to 0.7
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#01665e" fill="#01665e" stroke-width="2"/>
+                </svg>
+                0.7 to 0.9
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#1f3836" fill="#1f3836" stroke-width="2"/>
+                </svg>
+                0.9 to 1.0
+            </div>
+        </div>
+        <div id="ndvi-legend" class="col-sm-6">
+            <h5><b>NDVI</b></h5>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#8c510a" fill="#8c510a" stroke-width="2"/>
+                </svg>
+                -0.2 to -0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#d8b365" fill="#d8b365" stroke-width="2"/>
+                </svg>
+                -0.1 to 0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#f6e8c3" fill="#f6e8c3" stroke-width="2"/>
+                </svg>
+                0.1 to 0.3
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#c7eae5" fill="#c7eae5" stroke-width="2"/>
+                </svg>
+                0.3 to 0.5
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#5ab4ac" fill="#5ab4ac" stroke-width="2"/>
+                </svg>
+                0.5 to 0.7
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#01665e" fill="#01665e" stroke-width="2"/>
+                </svg>
+                0.7 to 0.9
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#1f3836" fill="#1f3836" stroke-width="2"/>
+                </svg>
+                0.9 to 1.0
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="lst-anom-legend" class="col-sm-6">
+            <h5><b>LST Anomaly</b></h5>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#8c510a" fill="#8c510a" stroke-width="2"/>
+                </svg>
+                -0.6 to -0.4
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#d8b365" fill="#d8b365" stroke-width="2"/>
+                </svg>
+                -0.4 to -0.2
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#f6e8c3" fill="#f6e8c3" stroke-width="2"/>
+                </svg>
+                -0.2 to 0.0
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#c7eae5" fill="#c7eae5" stroke-width="2"/>
+                </svg>
+                0.0 to 0.2
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#5ab4ac" fill="#5ab4ac" stroke-width="2"/>
+                </svg>
+                0.2 to 0.4
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#01665e" fill="#01665e" stroke-width="2"/>
+                </svg>
+                0.4 to 0.6
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#1f3836" fill="#1f3836" stroke-width="2"/>
+                </svg>
+                0.9 to 1.0
+            </div>
+        </div>
+        <div id="ndvi-anom-legend" class="col-sm-6">
+            <h5><b>NDVI Anomaly</b></h5>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#8c510a" fill="#8c510a" stroke-width="2"/>
+                </svg>
+                -0.6 to -0.5
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#d8b365" fill="#d8b365" stroke-width="2"/>
+                </svg>
+                -0.5 to -0.3
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#f6e8c3" fill="#f6e8c3" stroke-width="2"/>
+                </svg>
+                -0.3 to -0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#c7eae5" fill="#c7eae5" stroke-width="2"/>
+                </svg>
+                -0.1 to 0.1
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#5ab4ac" fill="#5ab4ac" stroke-width="2"/>
+                </svg>
+                0.1 to 0.3
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#01665e" fill="#01665e" stroke-width="2"/>
+                </svg>
+                0.3 to 0.5
+            </div>
+            <div>
+                <svg width="20" height="20" viewPort="0 0 20 20" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="0 0, 20 0, 20 20,0 20" stroke="#1f3836" fill="#1f3836" stroke-width="2"/>
+                </svg>
+                0.5 to 0.6
+            </div>
+        </div>
+    </div>
+    <form hidden>
+        <label>Projection </label>
+        <select id="projection">
+            <option value="EPSG:4326">EPSG:4326</option>
+            <option value="EPSG:3857">EPSG:3857</option>
+        </select>
+        <label>Precision </label>
+        <input id="precision" type="number" min="0" max="12" value="4"/>
+    </form>
+    <br>
+</div>
+{% endblock %}
+
+{% block header_buttons %}
+<div class="header-button glyphicon-button" data-toggle="tooltip" data-placement="bottom" title="Help">
+    <a data-toggle="modal" data-target="#help-modal"><span class="glyphicon glyphicon-question-sign"></span></a>
+</div>
+{% endblock %}
+
+{% block app_content %}
+<div style="overflow-y: scroll; height:100%;">
+    <style>
+        #map{
+            width:100%;
+            height:90%;
+        }
+        .map-view-legend {
+            bottom: 85px;
+            right: 5px;
+            width: 170px;
+            max-height: 90%;
+            overflow-y: auto;
+            margin: 5px;
+            color:white;
+            background: #286090;
+            border: 1px #ddd solid;
+            z-index: 999;
+        }
+    </style>
+    <br>
+    <div id="map" class="map" style="width:98%; height:88%;"></div>
+    <div id="popup" class="popup"></div>
+    <div id="graph"></div>
+    <br>
+</div>
+{% endblock %}
+
+{# Use the after_app_content block for modals #}
+{% block after_app_content %}
+<!-- Example Modal -->
+<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title" id="help-modal-label">Help Modal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Move the slider to view changes in the drought indices</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block app_actions %}
+{% endblock %}
